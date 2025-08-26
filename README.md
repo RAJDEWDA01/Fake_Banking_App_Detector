@@ -216,9 +216,7 @@ Edit `config.yaml` to customize:
 - **AI-powered** code similarity detection
 - **Blockchain-based** reputation system
 
-### 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 #### Development Setup
 ```bash
@@ -247,29 +245,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Data Scientist**: Feature engineering
 - **UI/UX Designer**: Interface design
 
-### 🏆 Awards & Recognition
-
-- **Best Security Tool** - Hackathon 2024
-- **People's Choice Award** - Innovation Category
-- **Technical Excellence** - Machine Learning Track
-
-### 📞 Contact
-
-For questions, suggestions, or collaboration:
-- **Email**: team@apkanalyzer.dev
-- **GitHub**: [github.com/team/advanced-ml-apk-analyzer](https://github.com)
-- **Demo**: [demo.apkanalyzer.dev](https://demo.apkanalyzer.dev)
-
----
-
-### 🎥 Demo Video
-
-[![APK Analyzer Demo](https://img.youtube.com/vi/demovideoID/0.jpg)](https://www.youtube.com/watch?v=demovideoID)
-
-### 📈 Live Dashboard
-
-Monitor our deployed system: [dashboard.apkanalyzer.dev](https://dashboard.apkanalyzer.dev)
-
----
-
-**Made with ❤️ for Hackathon 2024 | Advancing Mobile Security with AI**
