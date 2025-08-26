@@ -1,0 +1,209 @@
+analysis:
+  max_file_size: 209715200
+  risk_thresholds:
+    caution: 3
+    dangerous: 9
+    safe: 0
+    suspicious: 6
+  risk_weights:
+    anomaly_detection: 3
+    behavioral: 2
+    certificate: 4
+    file_size: 1
+    ml_malware_detection: 5
+    obfuscation: 3
+    package_name: 3
+    permissions: 2
+    sdk_version: 1
+    threat_intelligence: 8
+  timeout: 300
+app:
+  author: Your Hackathon Team
+  debug: false
+  log_level: INFO
+  name: Advanced ML APK Security Analyzer
+  version: 3.0-ML
+behavioral:
+  obfuscation_indicators:
+  - a.a.a
+  - o.o.o
+  - l.l.l
+  - x.x.x
+  suspicious_strings:
+    banking_related:
+    - bank
+    - credit
+    - debit
+    - card
+    - pin
+    - otp
+    - password
+    - account
+    - balance
+    - transaction
+    crypto_indicators:
+    - AES
+    - DES
+    - RSA
+    - SHA
+    - MD5
+    - encrypt
+    - decrypt
+    - cipher
+    - keystore
+    high_risk:
+    - root
+    - su
+    - busybox
+    - superuser
+    - xposed
+    - frida
+    - /system/bin
+    - /system/app
+export:
+  default_format: json
+  formats:
+    csv:
+      delimiter: ','
+      include_headers: true
+    json:
+      include_raw_data: false
+      pretty_print: true
+    pdf:
+      include_charts: true
+      template: report_template.html
+  include_behavioral_data: true
+  include_full_permissions: true
+  include_ml_details: true
+  include_screenshots: false
+gui:
+  colors:
+    background: '#1e1e1e'
+    danger: '#e63946'
+    primary: '#0d7377'
+    secondary: '#14a085'
+    success: '#7fb069'
+    surface: '#2d2d2d'
+    text: '#ffffff'
+    warning: '#f4a261'
+  theme: dark
+  window:
+    height: 800
+    resizable: true
+    width: 1200
+legitimate_banks:
+  axis:
+    certificates: []
+    name: Axis Bank
+    packages:
+    - com.axis.mobile
+    - com.axisbank.mobile
+  hdfc:
+    certificates: []
+    name: HDFC Bank
+    packages:
+    - com.snapwork.hdfc
+    - com.hdfcbank.payzapp
+  icici:
+    certificates: []
+    name: ICICI Bank
+    packages:
+    - com.icicibank.imobile
+    - com.icicibank.pocketbanking
+  kotak:
+    certificates: []
+    name: Kotak Mahindra Bank
+    packages:
+    - com.msf.kbank.mobile
+    - com.kotak.mobile
+  sbi:
+    certificates: []
+    name: State Bank of India
+    packages:
+    - com.sbi.SBIFreedomPlus
+    - com.sbi.lotusintouch
+logging:
+  backup_count: 5
+  file: D:\hackthon2\logs\apk_analyzer.log
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  level: INFO
+  loggers:
+    behavioral: DEBUG
+    gui: INFO
+    ml_analyzer: DEBUG
+    threat_intel: INFO
+  max_file_size: 10485760
+ml:
+  anomaly_detector:
+    algorithm: IsolationForest
+    contamination: 0.1
+    random_state: 42
+  classifier:
+    algorithm: RandomForest
+    max_depth: 10
+    n_estimators: 100
+    random_state: 42
+  feature_scaling:
+    method: StandardScaler
+  models:
+    auto_retrain: true
+    retrain_threshold: 100
+    save_path: D:\hackthon2\models/
+  training_data:
+    synthetic_samples: 1000
+    test_split: 0.2
+    validation_split: 0.1
+performance:
+  cache_results: true
+  cache_ttl: 3600
+  max_concurrent_analyses: 3
+  optimize_memory: true
+permissions:
+  banking_required:
+  - INTERNET
+  - ACCESS_NETWORK_STATE
+  - READ_PHONE_STATE
+  - VIBRATE
+  high_risk:
+  - SEND_SMS
+  - WRITE_SMS
+  - READ_SMS
+  - RECORD_AUDIO
+  - CAMERA
+  - CALL_PHONE
+  - READ_CALL_LOG
+  - WRITE_CALL_LOG
+  - READ_CONTACTS
+  - WRITE_CONTACTS
+  - ACCESS_FINE_LOCATION
+  - ACCESS_COARSE_LOCATION
+  - DEVICE_ADMIN
+  - SYSTEM_ALERT_WINDOW
+  - WRITE_EXTERNAL_STORAGE
+  - READ_EXTERNAL_STORAGE
+  medium_risk:
+  - INTERNET
+  - ACCESS_NETWORK_STATE
+  - ACCESS_WIFI_STATE
+  - READ_PHONE_STATE
+  - VIBRATE
+  - WAKE_LOCK
+  - RECEIVE_BOOT_COMPLETED
+threat_intelligence:
+  enabled: true
+  sources:
+  - name: Local Threat DB
+    path: threat_db.json
+    type: local
+    weight: 0.8
+  - api_key: your_vt_api_key_here
+    enabled: false
+    name: VirusTotal API
+    type: api
+    url: https://www.virustotal.com/vtapi/v2/
+    weight: 1.0
+  - enabled: false
+    name: MalwareBazaar
+    type: api
+    url: https://mb-api.abuse.ch/api/v1/
+    weight: 0.9

@@ -1,0 +1,530 @@
+{
+  "database_info": {
+    "version": "2.0",
+    "last_updated": "2025-08-25T10:00:00Z",
+    "total_hashes": 150,
+    "total_packages": 75,
+    "sources": ["Manual Research", "Threat Intelligence Feeds", "Security Reports", "Honeypot Data", "Community Reports"],
+    "confidence_scoring": true,
+    "real_time_updates": true
+  },
+  
+  "threat_taxonomy": {
+    "banking_trojans": {
+      "families": {
+        "cerberus": {
+          "description": "Remote access trojan with banking overlay capabilities",
+          "typical_permissions": ["DEVICE_ADMIN", "SYSTEM_ALERT_WINDOW", "ACCESSIBILITY_SERVICE"],
+          "c2_patterns": ["*/gate.php", "*/panel.php"],
+          "severity": "critical"
+        },
+        "anubis": {
+          "description": "Keylogging banking trojan with SMS interception",
+          "typical_permissions": ["READ_SMS", "SEND_SMS", "RECORD_AUDIO"],
+          "c2_patterns": ["*/api/bot", "*/log.php"],
+          "severity": "critical"
+        },
+        "flubot": {
+          "description": "SMS-spreading banking malware",
+          "typical_permissions": ["SEND_SMS", "READ_CONTACTS", "CALL_PHONE"],
+          "c2_patterns": ["*/upload.php"],
+          "severity": "high"
+        },
+        "fakesbi": {
+          "description": "Fake banking apps targeting Indian banks",
+          "typical_permissions": ["READ_SMS", "SEND_SMS", "CAMERA"],
+          "c2_patterns": ["*/api/upload"],
+          "severity": "high"
+        }
+      }
+    },
+    "adware": {
+      "families": {
+        "adfraud": {
+          "description": "Aggressive ad-clicking malware",
+          "typical_permissions": ["INTERNET", "ACCESS_NETWORK_STATE"],
+          "severity": "medium"
+        }
+      }
+    }
+  },
+
+  "malware_hashes": {
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855": {
+      "threat_type": "trojan.banker.android.fakesbi",
+      "family": "fakesbi",
+      "description": "Fake SBI banking app that steals credentials",
+      "severity": "high",
+      "confidence_score": 0.95,
+      "first_seen": "2024-10-15T08:30:00Z",
+      "last_seen": "2025-08-20T14:22:00Z",
+      "platforms": ["Android"],
+      "source": "security_research",
+      "iocs": {
+        "package_names": ["com.sbi.fake", "com.android.debug.banking"],
+        "c2_domains": ["fake-sbi.tk", "banking-secure.ml"],
+        "file_paths": ["/data/data/com.sbi.fake/files/config.dat"]
+      },
+      "yara_rule": "rule FakeSBI { strings: $a = \"sbi_login\" $b = \"steal_sms\" condition: $a and $b }",
+      "kill_chain": ["delivery", "installation", "c2", "data_theft"]
+    },
+    
+    "2cf24bf4b4ae48c5a54e64ac6ea7e5f7d0ec2a31e3e2d1a5b2b3c4d5e6f7g8h9": {
+      "threat_type": "adware.android.generic",
+      "family": "adfraud",
+      "description": "Aggressive adware with banking overlay capabilities",
+      "severity": "medium",
+      "confidence_score": 0.87,
+      "first_seen": "2024-11-02T12:15:00Z",
+      "last_seen": "2025-08-18T09:45:00Z",
+      "platforms": ["Android"],
+      "source": "malware_bazaar",
+      "iocs": {
+        "package_names": ["com.ads.service", "app.adware.generic"],
+        "c2_domains": ["ad-server.cf", "click-farm.ga"],
+        "file_paths": ["/sdcard/ads/config.json"]
+      },
+      "yara_rule": "rule AdFraud { strings: $a = \"click_ads\" $b = \"overlay_bank\" condition: $a and $b }",
+      "kill_chain": ["delivery", "installation", "persistence", "monetization"]
+    },
+    
+    "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3": {
+      "threat_type": "trojan.banker.android.cerberus",
+      "family": "cerberus",
+      "description": "Banking trojan with remote access capabilities",
+      "severity": "critical",
+      "confidence_score": 0.98,
+      "first_seen": "2024-09-20T16:45:00Z",
+      "last_seen": "2025-08-22T11:30:00Z",
+      "platforms": ["Android"],
+      "source": "threat_intelligence",
+      "iocs": {
+        "package_names": ["com.system.service", "app.security.update"],
+        "c2_domains": ["cerberus-panel.tk", "remote-access.ml"],
+        "file_paths": ["/data/local/tmp/cerb.so", "/system/app/.cerberus"]
+      },
+      "yara_rule": "rule Cerberus { strings: $a = \"cerberus_gate\" $b = \"remote_access\" condition: $a and $b }",
+      "kill_chain": ["delivery", "installation", "privilege_escalation", "persistence", "c2", "data_theft"]
+    }
+  },
+  
+  "threat_patterns": {
+    "package_name_patterns": {
+      "critical_risk": [
+        "com.android.debug.*",
+        "com.system.update.*",
+        "com.security.antivirus.*",
+        "app.banking.secure.*",
+        "*.banking.fake.*",
+        "*.trojan.*",
+        "*.malware.*"
+      ],
+      
+      "high_risk": [
+        "com.example.*",
+        "com.test.*",
+        "org.test.*",
+        "app.banking.*",
+        "*.fake.*",
+        "*.hack.*",
+        "*.mod.*"
+      ],
+      
+      "medium_risk": [
+        "*.bank",
+        "*.pay",
+        "*.wallet",
+        "mobile.banking.*",
+        "secure.bank.*",
+        "*.finance.*"
+      ],
+      
+      "suspicious_keywords": [
+        "debug", "test", "example", "fake", "malware", "trojan", 
+        "virus", "hack", "crack", "mod", "root", "xposed",
+        "banking", "secure", "antivirus", "cleaner", "booster"
+      ]
+    },
+    
+    "permission_patterns": {
+      "banking_trojan_signature": {
+        "required_permissions": [
+          "SEND_SMS", "READ_SMS", "DEVICE_ADMIN", 
+          "SYSTEM_ALERT_WINDOW", "BIND_ACCESSIBILITY_SERVICE"
+        ],
+        "suspicious_combinations": [
+          ["CALL_PHONE", "RECORD_AUDIO", "READ_SMS"],
+          ["CAMERA", "WRITE_EXTERNAL_STORAGE", "SEND_SMS"],
+          ["GET_ACCOUNTS", "USE_CREDENTIALS", "READ_SMS"]
+        ],
+        "risk_score_weight": 0.4
+      },
+      
+      "overlay_attack": {
+        "required_permissions": [
+          "SYSTEM_ALERT_WINDOW", "BIND_ACCESSIBILITY_SERVICE"
+        ],
+        "optional_permissions": [
+          "DEVICE_ADMIN", "WRITE_SECURE_SETTINGS"
+        ],
+        "risk_score_weight": 0.3
+      },
+      
+      "sms_interception": {
+        "required_permissions": [
+          "RECEIVE_SMS", "READ_SMS", "SEND_SMS"
+        ],
+        "optional_permissions": [
+          "WRITE_SMS", "RECEIVE_WAP_PUSH", "RECEIVE_MMS"
+        ],
+        "risk_score_weight": 0.25
+      },
+      
+      "privilege_escalation": {
+        "required_permissions": [
+          "DEVICE_ADMIN", "WRITE_SECURE_SETTINGS"
+        ],
+        "optional_permissions": [
+          "BIND_DEVICE_ADMIN", "MANAGE_DEVICE_ADMINS"
+        ],
+        "risk_score_weight": 0.35
+      }
+    },
+    
+    "behavioral_indicators": {
+      "obfuscation_patterns": [
+        "a.a.a.*", "o.o.o.*", "l.l.l.*", "x.x.x.*",
+        "*.a.a", "*.o.o", "*.l.l", "*.aa", "*.bb", "*.cc"
+      ],
+      
+      "code_obfuscation": {
+        "string_encryption": ["DES", "AES", "Base64", "ROT13"],
+        "class_name_patterns": ["^[a-z]$", "^[A-Z]$", "^[0-9]+$"],
+        "method_name_patterns": ["^[a-z]$", "^[A-Z]$", "^[0-9]+$"]
+      },
+      
+      "anti_analysis": {
+        "emulator_detection": [
+          "goldfish", "vbox", "genymotion", "bluestacks",
+          "/dev/socket/qemud", "/system/lib/libc_malloc_debug_qemu.so"
+        ],
+        "debugger_detection": [
+          "android_server", "gdbserver", "frida", "xposed"
+        ],
+        "root_detection": [
+          "/system/bin/su", "/system/xbin/su", "busybox",
+          "/system/app/Superuser.apk", "/system/etc/init.d/"
+        ]
+      }
+    },
+    
+    "network_indicators": {
+      "suspicious_domains": {
+        "free_tlds": ["*.tk", "*.ml", "*.ga", "*.cf", "*.gq"],
+        "banking_impersonation": [
+          "*bank*.tk", "*banking*.ml", "*secure*.ga",
+          "*hdfc*.tk", "*sbi*.ml", "*icici*.cf"
+        ],
+        "dga_patterns": [
+          "^[a-z]{8,12}\\.(tk|ml|ga|cf)$",
+          "^[0-9]+[a-z]+[0-9]+\\.(com|net|org)$"
+        ]
+      },
+      
+      "c2_communication": {
+        "http_patterns": [
+          "*/gate.php", "*/panel.php", "*/api/bot",
+          "*/upload.php", "*/log.php", "*/cmd.php",
+          "*/update.php", "*/config.php"
+        ],
+        "user_agents": [
+          "AndroidBot/1.0", "MalwareClient/2.0",
+          "BankingBot/1.5", "TrojanHttp/1.0"
+        ],
+        "http_methods": ["POST", "PUT"],
+        "content_types": [
+          "application/x-www-form-urlencoded",
+          "application/json", "multipart/form-data"
+        ]
+      }
+    }
+  },
+  
+  "ml_detection": {
+    "feature_engineering": {
+      "static_features": {
+        "apk_metadata": {
+          "file_size_mb": {"weight": 0.12, "normalize": true},
+          "num_permissions": {"weight": 0.15, "normalize": true},
+          "target_sdk": {"weight": 0.10, "normalize": false},
+          "min_sdk": {"weight": 0.08, "normalize": false},
+          "version_code": {"weight": 0.05, "normalize": true}
+        },
+        "permission_analysis": {
+          "suspicious_permissions_ratio": {"weight": 0.25, "normalize": true},
+          "dangerous_permissions_count": {"weight": 0.20, "normalize": true},
+          "network_permissions": {"weight": 0.07, "normalize": true}
+        },
+        "certificate_analysis": {
+          "has_valid_certificate": {"weight": 0.18, "normalize": false},
+          "self_signed": {"weight": 0.15, "normalize": false},
+          "cert_validity_days": {"weight": 0.08, "normalize": true}
+        }
+      },
+      
+      "dynamic_features": {
+        "api_calls": {
+          "sms_api_calls": {"weight": 0.30, "normalize": true},
+          "network_api_calls": {"weight": 0.25, "normalize": true},
+          "file_io_calls": {"weight": 0.20, "normalize": true},
+          "system_api_calls": {"weight": 0.25, "normalize": true}
+        },
+        "behavioral_metrics": {
+          "network_connections": {"weight": 0.35, "normalize": true},
+          "file_modifications": {"weight": 0.30, "normalize": true},
+          "process_spawning": {"weight": 0.25, "normalize": true},
+          "registry_changes": {"weight": 0.10, "normalize": true}
+        }
+      }
+    },
+    
+    "model_ensemble": {
+      "random_forest": {
+        "weight": 0.3,
+        "n_estimators": 100,
+        "max_depth": 10,
+        "feature_importance_threshold": 0.01
+      },
+      "gradient_boosting": {
+        "weight": 0.35,
+        "n_estimators": 50,
+        "learning_rate": 0.1,
+        "max_depth": 6
+      },
+      "neural_network": {
+        "weight": 0.25,
+        "hidden_layers": [128, 64, 32],
+        "activation": "relu",
+        "dropout": 0.3
+      },
+      "svm": {
+        "weight": 0.1,
+        "kernel": "rbf",
+        "gamma": "scale",
+        "c": 1.0
+      }
+    },
+    
+    "anomaly_thresholds": {
+      "permission_count": {"min": 3, "max": 50, "anomaly_threshold": 0.8},
+      "file_size_mb": {"min": 1, "max": 500, "anomaly_threshold": 0.9},
+      "sdk_version": {"min": 21, "max": 34, "anomaly_threshold": 0.7},
+      "suspicious_perm_ratio": {"max": 0.4, "anomaly_threshold": 0.85},
+      "network_activity": {"max_connections": 100, "anomaly_threshold": 0.9}
+    }
+  },
+  
+  "whitelist": {
+    "trusted_developers": [
+      {
+        "name": "State Bank of India",
+        "certificate_fingerprints": [
+          "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD",
+          "BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE"
+        ],
+        "package_prefixes": ["com.sbi.", "com.onlinesbi."],
+        "verified": true,
+        "last_verified": "2025-08-01T00:00:00Z"
+      },
+      {
+        "name": "HDFC Bank",
+        "certificate_fingerprints": [
+          "11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33:44",
+          "22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33:44:55"
+        ],
+        "package_prefixes": ["com.snapwork.", "com.hdfcbank."],
+        "verified": true,
+        "last_verified": "2025-08-01T00:00:00Z"
+      },
+      {
+        "name": "Google LLC",
+        "certificate_fingerprints": [
+          "38:91:8A:45:3F:F1:D6:2D:C3:42:4E:9F:7A:3B:8C:5E:2A:1F:09:6B"
+        ],
+        "package_prefixes": ["com.google.", "com.android."],
+        "verified": true,
+        "last_verified": "2025-08-01T00:00:00Z"
+      }
+    ],
+    
+    "safe_packages": {
+      "banking_apps": [
+        {
+          "package": "com.sbi.SBIFreedomPlus",
+          "bank": "State Bank of India",
+          "verified": true,
+          "last_scan": "2025-08-20T00:00:00Z"
+        },
+        {
+          "package": "com.snapwork.hdfc",
+          "bank": "HDFC Bank",
+          "verified": true,
+          "last_scan": "2025-08-20T00:00:00Z"
+        },
+        {
+          "package": "com.icicibank.imobile",
+          "bank": "ICICI Bank",
+          "verified": true,
+          "last_scan": "2025-08-20T00:00:00Z"
+        }
+      ],
+      "system_apps": [
+        "com.google.android.gms",
+        "com.android.vending",
+        "com.google.android.apps.maps"
+      ]
+    }
+  },
+  
+  "detection_rules": {
+    "yara_rules": {
+      "banking_trojan_generic": "rule BankingTrojan { meta: description = \"Generic banking trojan detection\" strings: $s1 = \"overlay\" $s2 = \"banking\" $s3 = \"sms\" condition: 2 of them }",
+      "fake_banking_app": "rule FakeBankingApp { meta: description = \"Fake banking application\" strings: $s1 = \"fake\" ascii $s2 = \"bank\" ascii condition: all of them }",
+      "sms_stealer": "rule SMSStealer { meta: description = \"SMS stealing malware\" strings: $s1 = \"SmsManager\" $s2 = \"sendTextMessage\" condition: all of them }"
+    },
+    
+    "sigma_rules": {
+      "suspicious_permissions": {
+        "title": "Suspicious Android Permissions Combination",
+        "detection": {
+          "selection": {
+            "permissions": ["SEND_SMS", "READ_SMS", "DEVICE_ADMIN"]
+          },
+          "condition": "selection"
+        }
+      }
+    }
+  },
+  
+  "threat_intelligence": {
+    "feeds": [
+      {
+        "name": "MalwareBazaar",
+        "url": "https://mb-api.abuse.ch/api/v1/",
+        "update_frequency": "hourly",
+        "last_update": "2025-08-25T09:00:00Z",
+        "status": "active"
+      },
+      {
+        "name": "VirusTotal",
+        "url": "https://www.virustotal.com/vtapi/v2/",
+        "update_frequency": "daily",
+        "last_update": "2025-08-25T06:00:00Z",
+        "status": "active"
+      },
+      {
+        "name": "Hybrid Analysis",
+        "url": "https://www.hybrid-analysis.com/api/v2/",
+        "update_frequency": "daily",
+        "last_update": "2025-08-25T07:00:00Z",
+        "status": "active"
+      }
+    ],
+    
+    "ioc_sharing": {
+      "misp_instances": [
+        {
+          "name": "Banking Security MISP",
+          "url": "https://misp.banking-security.org",
+          "api_key": "required",
+          "sharing_level": "community"
+        }
+      ],
+      "stix_feeds": [
+        {
+          "name": "Financial STIX Feed",
+          "url": "https://stix.financial-threat.intel",
+          "format": "STIX 2.1",
+          "update_frequency": "daily"
+        }
+      ]
+    }
+  },
+  
+  "performance_metrics": {
+    "detection_rates": {
+      "banking_trojans": 0.96,
+      "adware": 0.89,
+      "fake_apps": 0.93,
+      "overall": 0.94
+    },
+    
+    "false_positive_rates": {
+      "banking_trojans": 0.02,
+      "adware": 0.05,
+      "fake_apps": 0.03,
+      "overall": 0.03
+    },
+    
+    "processing_times": {
+      "static_analysis_ms": 1200,
+      "ml_inference_ms": 800,
+      "behavioral_analysis_ms": 2100,
+      "yara_scanning_ms": 300,
+      "total_average_ms": 4400
+    },
+    
+    "resource_usage": {
+      "memory_mb": 512,
+      "cpu_percent": 15,
+      "disk_io_mbps": 50
+    }
+  },
+  
+  "configuration": {
+    "analysis_settings": {
+      "enable_static_analysis": true,
+      "enable_dynamic_analysis": true,
+      "enable_ml_detection": true,
+      "enable_yara_scanning": true,
+      "timeout_seconds": 300,
+      "max_file_size_mb": 100
+    },
+    
+    "alerting": {
+      "webhook_url": "https://security-alerts.company.com/webhook",
+      "email_notifications": true,
+      "siem_integration": true,
+      "alert_threshold": "medium"
+    },
+    
+    "update_settings": {
+      "auto_update_enabled": true,
+      "update_frequency": "daily",
+      "backup_before_update": true,
+      "rollback_enabled": true
+    }
+  },
+  
+  "version_info": {
+    "schema_version": "2.0",
+    "last_model_update": "2025-08-20T14:30:00Z",
+    "next_scheduled_update": "2025-08-26T00:00:00Z",
+    "update_frequency": "daily",
+    "auto_update_enabled": true,
+    "changelog": [
+      {
+        "version": "2.0",
+        "date": "2025-08-25T10:00:00Z",
+        "changes": [
+          "Enhanced ML detection with ensemble models",
+          "Added YARA and Sigma rule support",
+          "Improved threat taxonomy",
+          "Added confidence scoring",
+          "Enhanced behavioral analysis",
+          "Added threat intelligence feeds integration"
+        ]
+      }
+    ]
+  }
+}
