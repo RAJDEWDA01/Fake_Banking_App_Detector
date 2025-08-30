@@ -23,7 +23,7 @@ class AdvancedAPKAnalyzerGUI:
         self.setup_gui()
         
     def setup_gui(self):
-        self.root.title("🤖 Advanced ML APK Security Analyzer v3.0")
+        self.root.title("Detecting Fake Banking App System")
         self.root.geometry("1200x800")
         self.root.configure(bg='#1e1e1e')  # Dark theme
         
@@ -61,7 +61,7 @@ class AdvancedAPKAnalyzerGUI:
         
         title_label = tk.Label(
             title_frame,
-            text="🤖 Advanced ML APK Security Analyzer",
+            text="Team Safe-AI",
             font=("Segoe UI", 20, "bold"),
             fg='#ffffff',
             bg='#0d7377'
@@ -110,7 +110,7 @@ class AdvancedAPKAnalyzerGUI:
         # Upload section
         upload_frame = tk.LabelFrame(
             parent,
-            text="📁 File Upload",
+            text="File Upload",
             font=("Segoe UI", 12, "bold"),
             fg='#ffffff',
             bg='#2d2d2d',
@@ -134,7 +134,7 @@ class AdvancedAPKAnalyzerGUI:
         
         self.upload_btn = tk.Button(
             upload_frame,
-            text="🔍 Select APK File",
+            text="Select APK File",
             command=self.upload_file,
             font=("Segoe UI", 11, "bold"),
             bg='#0d7377',
@@ -149,7 +149,7 @@ class AdvancedAPKAnalyzerGUI:
         # Analysis options
         options_frame = tk.LabelFrame(
             parent,
-            text="⚙️ Analysis Options",
+            text="Analysis Options",
             font=("Segoe UI", 12, "bold"),
             fg='#ffffff',
             bg='#2d2d2d',
@@ -164,10 +164,10 @@ class AdvancedAPKAnalyzerGUI:
         self.behavioral_var = tk.BooleanVar(value=True)
         
         options = [
-            ("🧠 ML Classification", self.ml_analysis_var),
-            ("🔍 Deep Analysis", self.deep_analysis_var),
-            ("🛡️ Threat Intelligence", self.threat_intel_var),
-            ("🎭 Behavioral Analysis", self.behavioral_var)
+            ("ML Classification", self.ml_analysis_var),
+            ("Deep Analysis", self.deep_analysis_var),
+            ("Threat Intelligence", self.threat_intel_var),
+            ("Behavioral Analysis", self.behavioral_var)
         ]
         
         for text, var in options:
@@ -187,7 +187,7 @@ class AdvancedAPKAnalyzerGUI:
         # Progress section
         progress_frame = tk.LabelFrame(
             parent,
-            text="📊 Analysis Progress",
+            text="Analysis Progress",
             font=("Segoe UI", 12, "bold"),
             fg='#ffffff',
             bg='#2d2d2d',
@@ -215,7 +215,7 @@ class AdvancedAPKAnalyzerGUI:
         # Quick stats
         stats_frame = tk.LabelFrame(
             parent,
-            text="📈 Quick Stats",
+            text="Quick Stats",
             font=("Segoe UI", 12, "bold"),
             fg='#ffffff',
             bg='#2d2d2d',
@@ -263,7 +263,7 @@ class AdvancedAPKAnalyzerGUI:
     def create_ml_tab(self):
         """Create ML analysis results tab"""
         ml_frame = ttk.Frame(self.notebook)
-        self.notebook.add(ml_frame, text="🤖 ML Analysis")
+        self.notebook.add(ml_frame, text=" ML Analysis")
         
         # ML Results header
         ml_header = tk.Label(
@@ -297,7 +297,7 @@ class AdvancedAPKAnalyzerGUI:
     def create_traditional_tab(self):
         """Create traditional analysis tab"""
         trad_frame = ttk.Frame(self.notebook)
-        self.notebook.add(trad_frame, text="🔍 Traditional Analysis")
+        self.notebook.add(trad_frame, text="Traditional Analysis")
         
         # Create sub-tabs for traditional analysis
         trad_notebook = ttk.Notebook(trad_frame)
@@ -348,7 +348,7 @@ class AdvancedAPKAnalyzerGUI:
     def create_threat_intel_tab(self):
         """Create threat intelligence tab"""
         threat_frame = ttk.Frame(self.notebook)
-        self.notebook.add(threat_frame, text="🛡️ Threat Intel")
+        self.notebook.add(threat_frame, text="Threat Intel")
         
         threat_header = tk.Label(
             threat_frame,
@@ -372,7 +372,7 @@ class AdvancedAPKAnalyzerGUI:
     def create_behavioral_tab(self):
         """Create behavioral analysis tab"""
         behavioral_frame = ttk.Frame(self.notebook)
-        self.notebook.add(behavioral_frame, text="🎭 Behavioral")
+        self.notebook.add(behavioral_frame, text="Behavioral")
         
         behavioral_header = tk.Label(
             behavioral_frame,
@@ -396,7 +396,7 @@ class AdvancedAPKAnalyzerGUI:
     def create_visualization_tab(self):
         """Create data visualization tab"""
         viz_frame = ttk.Frame(self.notebook)
-        self.notebook.add(viz_frame, text="📊 Visualization")
+        self.notebook.add(viz_frame, text="Visualization")
         
         # Create matplotlib figure
         self.fig, ((self.ax1, self.ax2), (self.ax3, self.ax4)) = plt.subplots(2, 2, figsize=(12, 8))
@@ -414,7 +414,7 @@ class AdvancedAPKAnalyzerGUI:
     def create_history_tab(self):
         """Create analysis history tab"""
         history_frame = ttk.Frame(self.notebook)
-        self.notebook.add(history_frame, text="📚 History")
+        self.notebook.add(history_frame, text="History")
         
         history_header = tk.Label(
             history_frame,
@@ -431,7 +431,7 @@ class AdvancedAPKAnalyzerGUI:
         
         clear_btn = tk.Button(
             history_controls,
-            text="🗑️ Clear History",
+            text="Clear History",
             command=self.clear_history,
             font=("Segoe UI", 10),
             bg='#e63946',
@@ -443,7 +443,7 @@ class AdvancedAPKAnalyzerGUI:
         
         export_btn = tk.Button(
             history_controls,
-            text="📊 Export Report",
+            text="Export Report",
             command=self.export_report,
             font=("Segoe UI", 10),
             bg='#0d7377',
@@ -504,14 +504,14 @@ class AdvancedAPKAnalyzerGUI:
     def update_stats(self):
         """Update quick stats display"""
         stats_text = f"""
-📊 Analysis Statistics:
+Analysis Statistics:
 ────────────────────
 Total Analyzed: {len(self.analysis_history)}
 Safe Apps: {sum(1 for a in self.analysis_history if 'SAFE' in a.get('Verdict', ''))}
 Suspicious: {sum(1 for a in self.analysis_history if 'SUSPICIOUS' in a.get('Verdict', ''))}
 Malicious: {sum(1 for a in self.analysis_history if 'DANGEROUS' in a.get('Verdict', ''))}
 
-🤖 ML Model Status:
+ML Model Status:
 ────────────────────
 Classification: Active ✓
 Anomaly Detection: Active ✓
@@ -537,7 +537,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
     
     def analyze_file_threaded(self, file_path):
         """Run analysis in separate thread"""
-        self.upload_btn.config(state='disabled', text='🔄 Analyzing...')
+        self.upload_btn.config(state='disabled', text='Analyzing...')
         self.progress.configure(value=0)
         self.progress_label.config(text="Initializing analysis...")
         
@@ -574,7 +574,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
     def display_results(self, result):
         """Display comprehensive analysis results"""
         # Reset UI
-        self.upload_btn.config(state='normal', text='🔍 Select APK File')
+        self.upload_btn.config(state='normal', text='Select APK File')
         self.progress.configure(value=100)
         self.progress_label.config(text="Analysis complete!")
         
@@ -607,13 +607,13 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
         self.ml_results_text.delete(1.0, tk.END)
         
         # Header
-        self.ml_results_text.insert(tk.END, "🤖 MACHINE LEARNING ANALYSIS REPORT\n", "header")
+        self.ml_results_text.insert(tk.END, " MACHINE LEARNING ANALYSIS REPORT\n", "header")
         self.ml_results_text.insert(tk.END, "=" * 60 + "\n\n")
         
         # ML Predictions
         ml_predictions = result.get('ML Predictions', {})
         if ml_predictions:
-            self.ml_results_text.insert(tk.END, "🧠 ML Classification Results:\n", "header")
+            self.ml_results_text.insert(tk.END, " ML Classification Results:\n", "header")
             self.ml_results_text.insert(tk.END, f"   Classification: {ml_predictions.get('Classification', 'Unknown')}\n")
             self.ml_results_text.insert(tk.END, f"   Confidence: {ml_predictions.get('Malware Probability', 'Unknown')}\n")
             self.ml_results_text.insert(tk.END, f"   Anomaly Detection: {'Yes' if ml_predictions.get('Is Anomaly') else 'No'}\n\n")
@@ -630,7 +630,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
         else:
             tag = "warning"
         
-        self.ml_results_text.insert(tk.END, "📊 Overall Assessment:\n", "header")
+        self.ml_results_text.insert(tk.END, " Overall Assessment:\n", "header")
         self.ml_results_text.insert(tk.END, f"   Verdict: {verdict}\n", tag)
         self.ml_results_text.insert(tk.END, f"   Risk Level: {risk_level}\n", tag)
         self.ml_results_text.insert(tk.END, f"   Risk Score: {risk_score}/10\n\n", tag)
@@ -638,7 +638,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
         # Security Concerns
         reasons = result.get('Reasons', [])
         if reasons:
-            self.ml_results_text.insert(tk.END, "🚨 Security Concerns Detected:\n", "header")
+            self.ml_results_text.insert(tk.END, " Security Concerns Detected:\n", "header")
             for i, reason in enumerate(reasons, 1):
                 if 'ML Model' in reason:
                     self.ml_results_text.insert(tk.END, f"   {i}. {reason}\n", "danger")
@@ -649,7 +649,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
             self.ml_results_text.insert(tk.END, "\n")
         
         # App Information
-        self.ml_results_text.insert(tk.END, "📱 Application Information:\n", "header")
+        self.ml_results_text.insert(tk.END, " Application Information:\n", "header")
         app_info = [
             ("Name", result.get('App Name', 'N/A')),
             ("Package", result.get('Package', 'N/A')),
@@ -666,7 +666,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
         """Display traditional analysis results"""
         # Summary
         self.summary_text.delete(1.0, tk.END)
-        self.summary_text.insert(tk.END, f"🔍 SECURITY ANALYSIS SUMMARY\n")
+        self.summary_text.insert(tk.END, f" SECURITY ANALYSIS SUMMARY\n")
         self.summary_text.insert(tk.END, f"{'='*50}\n\n")
         
         verdict = result.get('Verdict', 'Unknown')
@@ -693,13 +693,13 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
             normal_perms = [p for p in permissions if p not in dangerous_perms]
             
             if dangerous_perms:
-                self.permissions_text.insert(tk.END, "🚨 HIGH-RISK PERMISSIONS:\n")
+                self.permissions_text.insert(tk.END, "HIGH-RISK PERMISSIONS:\n")
                 for perm in dangerous_perms:
-                    self.permissions_text.insert(tk.END, f"  ⚠️ {perm}\n")
+                    self.permissions_text.insert(tk.END, f"  ⚠{perm}\n")
                 self.permissions_text.insert(tk.END, "\n")
             
             if normal_perms:
-                self.permissions_text.insert(tk.END, "ℹ️ STANDARD PERMISSIONS:\n")
+                self.permissions_text.insert(tk.END, " STANDARD PERMISSIONS:\n")
                 for perm in normal_perms:
                     self.permissions_text.insert(tk.END, f"  • {perm}\n")
         
@@ -732,7 +732,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
         
         threat_intel = result.get('Threat Intelligence', {})
         if threat_intel:
-            self.threat_text.insert(tk.END, "🛡️ THREAT INTELLIGENCE REPORT\n")
+            self.threat_text.insert(tk.END, "THREAT INTELLIGENCE REPORT\n")
             self.threat_text.insert(tk.END, "=" * 50 + "\n\n")
             
             self.threat_text.insert(tk.END, f"Hash Reputation: {threat_intel.get('hash_reputation', 'Unknown')}\n")
@@ -745,7 +745,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
                 for source in sources:
                     self.threat_text.insert(tk.END, f"• {source}\n")
             else:
-                self.threat_text.insert(tk.END, "✅ No threats detected in intelligence databases\n")
+                self.threat_text.insert(tk.END, " No threats detected in intelligence databases\n")
         else:
             self.threat_text.insert(tk.END, "No threat intelligence data available")
     
@@ -755,29 +755,29 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
         
         behavioral = result.get('Behavioral Analysis', {})
         if behavioral and 'error' not in behavioral:
-            self.behavioral_text.insert(tk.END, "🎭 BEHAVIORAL ANALYSIS REPORT\n")
+            self.behavioral_text.insert(tk.END, " BEHAVIORAL ANALYSIS REPORT\n")
             self.behavioral_text.insert(tk.END, "=" * 50 + "\n\n")
             
             # String analysis
             string_analysis = behavioral.get('string_analysis', {})
             if string_analysis:
-                self.behavioral_text.insert(tk.END, "🔍 String Analysis:\n")
+                self.behavioral_text.insert(tk.END, " String Analysis:\n")
                 for string_type, count in string_analysis.items():
                     self.behavioral_text.insert(tk.END, f"  {string_type}: {count} occurrences\n")
                 self.behavioral_text.insert(tk.END, "\n")
             
             # Obfuscation detection
             if behavioral.get('obfuscation_detected'):
-                self.behavioral_text.insert(tk.END, "⚠️ Code obfuscation detected\n")
+                self.behavioral_text.insert(tk.END, "Code obfuscation detected\n")
             
             # Crypto usage
             if behavioral.get('crypto_usage'):
-                self.behavioral_text.insert(tk.END, "🔐 Cryptographic functions detected\n")
+                self.behavioral_text.insert(tk.END, " Cryptographic functions detected\n")
             
             # Suspicious behaviors
             suspicious_behaviors = behavioral.get('suspicious_behaviors', [])
             if suspicious_behaviors:
-                self.behavioral_text.insert(tk.END, "\n🚨 Suspicious Behaviors:\n")
+                self.behavioral_text.insert(tk.END, "\nSuspicious Behaviors:\n")
                 for behavior in suspicious_behaviors:
                     self.behavioral_text.insert(tk.END, f"  • {behavior}\n")
         else:
@@ -958,7 +958,7 @@ Last Update: {datetime.now().strftime("%m/%d/%Y")}
     
     def display_error(self, result):
         """Display error message"""
-        error_msg = f"❌ Analysis Error\n\n{result.get('Error', 'Unknown error')}\n\n"
+        error_msg = f" Analysis Error\n\n{result.get('Error', 'Unknown error')}\n\n"
         error_msg += result.get('Details', 'Please ensure the file is a valid APK and try again.')
         
         # Display error in ML tab (primary)
@@ -995,4 +995,5 @@ def main():
         messagebox.showerror("Startup Error", f"Failed to start application:\n{str(e)}")
 
 if __name__ == "__main__":
+
     main()
