@@ -15,9 +15,10 @@ import time
 from datetime import datetime
 import re
 from typing import Dict, List, Tuple, Any
-from androguard.core.bytecodes.apk import APK
+from androguard.core.apk import APK
 from androguard.core.analysis.analysis import Analysis
-from androguard.core.bytecodes.dvm import DalvikVMFormat
+from androguard.core.dex import DEX  # Fixed import for Androguard 4.1.3
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -41,43 +42,43 @@ class MLSecurityAnalyzer:
             print("🔄 Training new ML models...")
             self.train_models()
     
-    def generate_synthetic_training_data(self, n_samples=1000):
-        """Generate synthetic training data for demonstration"""
+    def generate_synthetic_training_data(self, n_samples=2000):
+        """Generate more realistic synthetic training data"""
         np.random.seed(42)
         
         features = []
         labels = []
         
-        # Generate features for legitimate apps
-        for _ in range(n_samples // 2):
+        # Generate features for legitimate apps (80% of dataset - more realistic)
+        for _ in range(int(n_samples * 0.8)):
             feature_vector = [
-                np.random.randint(5, 50),    # num_permissions
-                np.random.randint(10, 100),  # file_size_mb
-                np.random.randint(23, 33),   # target_sdk
-                np.random.randint(16, 30),   # min_sdk
-                np.random.randint(0, 3),     # suspicious_permissions
-                np.random.randint(0, 2),     # has_certificate
-                np.random.randint(1, 10),    # version_code
+                np.random.randint(3, 60),    # num_permissions (wider range)
+                np.random.randint(5, 150),   # file_size_mb (more realistic range)
+                np.random.randint(21, 34),   # target_sdk (modern SDKs)
+                np.random.randint(16, 28),   # min_sdk (reasonable range)
+                np.random.randint(0, 5),     # suspicious_permissions (even legit apps have some)
+                np.random.randint(1, 2),     # has_certificate (most legit apps are signed)
+                np.random.randint(1, 100),   # version_code (wider range)
                 np.random.randint(0, 2),     # network_permissions
-                np.random.randint(0, 1),     # admin_permissions
-                np.random.randint(50, 500),  # num_activities
+                np.random.randint(0, 1),     # admin_permissions (rare in legit apps)
+                np.random.randint(10, 1000), # num_activities (more realistic range)
             ]
             features.append(feature_vector)
             labels.append(0)  # Legitimate
         
-        # Generate features for malicious apps
-        for _ in range(n_samples // 2):
+        # Generate features for malicious apps (20% of dataset)
+        for _ in range(int(n_samples * 0.2)):
             feature_vector = [
-                np.random.randint(15, 80),   # num_permissions (more)
-                np.random.randint(1, 20),    # file_size_mb (smaller)
-                np.random.randint(15, 25),   # target_sdk (older)
-                np.random.randint(10, 20),   # min_sdk (older)
-                np.random.randint(3, 10),    # suspicious_permissions (more)
-                np.random.randint(0, 1),     # has_certificate (less likely)
-                np.random.randint(1, 3),     # version_code (low)
+                np.random.randint(20, 100),  # num_permissions (excessive permissions)
+                np.random.randint(1, 30),    # file_size_mb (often smaller, packed)
+                np.random.randint(10, 23),   # target_sdk (outdated)
+                np.random.randint(8, 19),    # min_sdk (very old)
+                np.random.randint(5, 15),    # suspicious_permissions (clearly excessive)
+                np.random.randint(0, 1),     # has_certificate (many unsigned)
+                np.random.randint(1, 5),     # version_code (low versions)
                 np.random.randint(1, 3),     # network_permissions
-                np.random.randint(1, 3),     # admin_permissions (more)
-                np.random.randint(5, 100),   # num_activities (fewer)
+                np.random.randint(1, 3),     # admin_permissions (often present)
+                np.random.randint(1, 50),    # num_activities (minimal legitimate functionality)
             ]
             features.append(feature_vector)
             labels.append(1)  # Malicious
@@ -96,18 +97,22 @@ class MLSecurityAnalyzer:
         X_train_scaled = self.feature_scaler.fit_transform(X_train)
         X_test_scaled = self.feature_scaler.transform(X_test)
         
-        # Train malware classifier
+        # Train malware classifier with better parameters
         self.malware_classifier = RandomForestClassifier(
-            n_estimators=100, 
+            n_estimators=200, 
             random_state=42,
-            max_depth=10
+            max_depth=15,
+            min_samples_split=10,
+            min_samples_leaf=5,
+            class_weight='balanced'  # Handle imbalanced dataset
         )
         self.malware_classifier.fit(X_train_scaled, y_train)
         
-        # Train anomaly detector
+        # Train anomaly detector with less sensitivity
         self.anomaly_detector = IsolationForest(
-            contamination=0.1,
-            random_state=42
+            contamination=0.05,  # Reduced from 0.1 - less sensitive
+            random_state=42,
+            n_estimators=200
         )
         self.anomaly_detector.fit(X_train_scaled[y_train == 0])  # Train on legitimate apps only
         
@@ -215,7 +220,7 @@ class MLSecurityAnalyzer:
         try:
             apk = APK(apk_path)
             
-            # Extract DEX files for deeper analysis
+            # Extract DEX files for deeper analysis - Fixed for Androguard 4.1.3
             analysis_results = {
                 'api_calls': [],
                 'string_analysis': {},
@@ -224,11 +229,24 @@ class MLSecurityAnalyzer:
                 'suspicious_behaviors': []
             }
             
-            # Analyze strings in APK
+            # Analyze strings in APK using the new API
             strings = []
-            for dex in apk.get_all_dex():
-                dvm = DalvikVMFormat(dex)
-                strings.extend(dvm.get_strings())
+            try:
+                # Get DEX files using the updated method
+                for dex_name, dex_raw in apk.get_dex_names():
+                    dex = DEX(dex_raw)
+                    strings.extend(dex.get_strings())
+            except Exception as e:
+                # Fallback method if the above doesn't work
+                try:
+                    # Alternative method for getting strings
+                    dex_files = apk.get_all_dex()
+                    for dex_raw in dex_files:
+                        dex = DEX(dex_raw)
+                        strings.extend(dex.get_strings())
+                except Exception as e2:
+                    analysis_results['error'] = f"Could not extract strings: {str(e2)}"
+                    strings = []  # Empty list as fallback
             
             # Look for suspicious strings
             suspicious_strings = [
@@ -318,39 +336,63 @@ def advanced_analyze_apk(file_path: str) -> Dict[str, Any]:
         # Behavioral analysis
         behavioral_analysis = ml_analyzer.behavioral_analysis(file_path)
         
-        # Enhanced rule-based analysis
+        # Enhanced rule-based analysis with more realistic scoring
         suspicious_reasons = []
         risk_score = 0
         
-        # Apply traditional rules (enhanced)
+        # Apply traditional rules (more balanced)
         legitimate_banks = {
-            'sbi': ['com.sbi.SBIFreedomPlus', 'com.sbi.lotusintouch'],
-            'hdfc': ['com.snapwork.hdfc', 'com.hdfcbank.payzapp'],
-            'icici': ['com.icicibank.imobile', 'com.icicibank.pocketbanking'],
-            'axis': ['com.axis.mobile', 'com.axisbank.mobile'],
-            'kotak': ['com.msf.kbank.mobile', 'com.kotak.mobile']
+            'sbi': ['com.sbi.SBIFreedomPlus', 'com.sbi.lotusintouch', 'com.onlinesbi'],
+            'hdfc': ['com.snapwork.hdfc', 'com.hdfcbank.payzapp', 'com.hdfcbank'],
+            'icici': ['com.icicibank.imobile', 'com.icicibank.pocketbanking', 'com.icicibank'],
+            'axis': ['com.axis.mobile', 'com.axisbank.mobile', 'com.axis'],
+            'kotak': ['com.msf.kbank.mobile', 'com.kotak.mobile', 'com.kotak'],
+            'paytm': ['net.one97.paytm'],
+            'phonepe': ['com.phonepe.app'],
+            'googlepay': ['com.google.android.apps.nbu.paisa.user'],
+            'amazon': ['in.amazon.mShop.android.shopping'],
+            'flipkart': ['com.flipkart.android'],
+            'whatsapp': ['com.whatsapp'],
+            'facebook': ['com.facebook.katana'],
+            'instagram': ['com.instagram.android'],
+            'youtube': ['com.google.android.youtube'],
+            'chrome': ['com.android.chrome'],
+            'gmail': ['com.google.android.gm']
         }
         
-        # Enhanced package verification
+        # More lenient package verification - only flag obvious fakes
         if app_name and package:
             app_lower = app_name.lower()
             package_lower = package.lower()
             
-            for bank, valid_packages in legitimate_banks.items():
-                if bank in app_lower or any(b in app_lower for b in ['bank', 'pay', 'wallet']):
-                    if not any(valid_pkg.lower() in package_lower for valid_pkg in valid_packages):
-                        if 'com.' + bank not in package_lower:
-                            suspicious_reasons.append(f"Suspicious banking app: Package '{package}' doesn't match legitimate patterns")
-                            risk_score += 4
+            # Only check banking apps specifically
+            banking_keywords = ['bank', 'banking', 'netbanking', 'mobile banking']
+            is_banking_app = any(keyword in app_lower for keyword in banking_keywords)
+            
+            if is_banking_app:
+                is_legitimate_bank = False
+                for bank, valid_packages in legitimate_banks.items():
+                    if bank in app_lower:
+                        if any(valid_pkg.lower() in package_lower for valid_pkg in valid_packages):
+                            is_legitimate_bank = True
+                            break
+                
+                # Only flag if it claims to be a bank but doesn't match known patterns
+                if not is_legitimate_bank and any(bank in app_lower for bank in legitimate_banks.keys()):
+                    suspicious_reasons.append(f"Potentially fake banking app: '{app_name}' with package '{package}'")
+                    risk_score += 6  # High but not maximum score
         
-        # ML predictions integration
-        if is_malware:
-            suspicious_reasons.append(f"ML Model Detection: Classified as malware (confidence: {confidence:.2%})")
-            risk_score += int(confidence * 5)
+        # ML predictions integration - more conservative
+        if is_malware and confidence > 0.8:  # Only flag if highly confident
+            suspicious_reasons.append(f"ML Model Detection: High confidence malware classification ({confidence:.2%})")
+            risk_score += int(confidence * 4)  # Reduced impact
+        elif is_malware and confidence > 0.6:
+            suspicious_reasons.append(f"ML Model Detection: Possible malware (confidence: {confidence:.2%})")
+            risk_score += 2
         
         if is_anomaly:
-            suspicious_reasons.append("Anomaly Detection: App behavior differs significantly from normal patterns")
-            risk_score += 3
+            suspicious_reasons.append("Anomaly Detection: Unusual app characteristics detected")
+            risk_score += 2  # Reduced from 3
         
         # Threat intelligence integration
         if threat_intel['hash_reputation'] == 'malicious':
@@ -370,56 +412,76 @@ def advanced_analyze_apk(file_path: str) -> Dict[str, Any]:
             sensitive_strings = behavioral_analysis['string_analysis']
             high_risk_strings = ['bank', 'credit', 'password', 'pin', 'otp']
             for string_type, count in sensitive_strings.items():
-                if string_type in high_risk_strings and count > 5:
+                if string_type in high_risk_strings and count > 10:  # Increased threshold
                     suspicious_reasons.append(f"High frequency of sensitive strings: {string_type} ({count} occurrences)")
                     risk_score += 2
         
-        # Permission analysis (enhanced)
-        high_risk_perms = [
+        # Permission analysis (more realistic)
+        critical_perms = [
             "SEND_SMS", "WRITE_SMS", "READ_SMS",
-            "RECORD_AUDIO", "CAMERA", "CALL_PHONE",
-            "READ_CONTACTS", "WRITE_CONTACTS",
-            "ACCESS_FINE_LOCATION", "DEVICE_ADMIN",
-            "SYSTEM_ALERT_WINDOW", "WRITE_EXTERNAL_STORAGE"
+            "DEVICE_ADMIN", "SYSTEM_ALERT_WINDOW"
         ]
         
-        dangerous_perms = []
+        high_risk_perms = [
+            "RECORD_AUDIO", "CAMERA", "CALL_PHONE",
+            "READ_CONTACTS", "WRITE_CONTACTS",
+            "ACCESS_FINE_LOCATION"
+        ]
+        
+        critical_count = 0
+        high_risk_count = 0
+        
         for perm in permissions:
+            for critical in critical_perms:
+                if critical in perm:
+                    critical_count += 1
+                    break
             for high_risk in high_risk_perms:
                 if high_risk in perm:
-                    dangerous_perms.append(perm)
-                    risk_score += 2
+                    high_risk_count += 1
+                    break
         
-        if dangerous_perms:
-            suspicious_reasons.append(f"High-risk permissions: {', '.join(set(dangerous_perms))}")
+        if critical_count >= 2:
+            suspicious_reasons.append(f"Multiple critical permissions: {critical_count} detected")
+            risk_score += critical_count * 2
         
-        # Certificate analysis
-        if not certificate:
-            suspicious_reasons.append("Missing digital signature")
-            risk_score += 4
-        
-        # File size analysis
-        file_size_mb = file_size / (1024 * 1024)
-        if file_size_mb < 2:
-            suspicious_reasons.append(f"Unusually small file size: {file_size_mb:.2f}MB")
+        if high_risk_count >= 4:  # Only flag if many sensitive permissions
+            suspicious_reasons.append(f"Many sensitive permissions: {high_risk_count} detected")
             risk_score += 2
-        elif file_size_mb > 200:
+        
+        # Certificate analysis - more lenient
+        if not certificate:
+            suspicious_reasons.append("App is not digitally signed")
+            risk_score += 3  # Reduced from 4
+        
+        # File size analysis - more realistic thresholds
+        file_size_mb = file_size / (1024 * 1024)
+        if file_size_mb < 0.5:  # Very tiny apps are suspicious
+            suspicious_reasons.append(f"Extremely small file size: {file_size_mb:.2f}MB")
+            risk_score += 3
+        elif file_size_mb > 500:  # Very large apps might be suspicious
             suspicious_reasons.append(f"Unusually large file size: {file_size_mb:.2f}MB")
             risk_score += 1
         
-        # SDK version analysis
-        if target_sdk and int(target_sdk) < 23:
-            suspicious_reasons.append(f"Outdated target SDK: {target_sdk} (Android 6.0+)")
-            risk_score += 2
+        # SDK version analysis - more lenient
+        if target_sdk and int(target_sdk) < 19:  # Only flag very old SDKs
+            suspicious_reasons.append(f"Very outdated target SDK: {target_sdk} (Android 4.4-)")
+            risk_score += 3
+        elif target_sdk and int(target_sdk) < 23:
+            suspicious_reasons.append(f"Outdated target SDK: {target_sdk} (Android 6.0-)")
+            risk_score += 1
         
-        # Determine final verdict
+        # More realistic verdict calculation
         if risk_score == 0:
             verdict = "SAFE ✅"
             risk_level = "LOW"
-        elif risk_score <= 4:
+        elif risk_score <= 3:
+            verdict = "LIKELY SAFE ✅"
+            risk_level = "LOW"
+        elif risk_score <= 6:
             verdict = "CAUTION ⚠️"
             risk_level = "MEDIUM"
-        elif risk_score <= 8:
+        elif risk_score <= 10:
             verdict = "SUSPICIOUS ❌"
             risk_level = "HIGH"
         else:

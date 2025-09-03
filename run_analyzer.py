@@ -1,13 +1,4 @@
-#!/usr/bin/env python3
-"""
-Advanced ML APK Security Analyzer Launcher
-==========================================
 
-This script provides an easy way to launch the APK analyzer with
-proper error handling and environment checking.
-
-Usage: python run_analyzer.py [options]
-"""
 
 import os
 import sys
@@ -79,7 +70,7 @@ def check_dependencies():
         logger.error(f"Missing dependencies: {', '.join(missing_packages)}")
         return False, missing_packages
     
-    logger.info("✅ All dependencies found")
+    logger.info("All dependencies found")
     return True, []
 
 def check_project_structure():
@@ -104,7 +95,7 @@ def check_project_structure():
         logger.error(f"Missing files: {', '.join(missing_files)}")
         return False, missing_files
     
-    logger.info("✅ Project structure valid")
+    logger.info(" Project structure valid")
     return True, []
 
 def check_directories():
@@ -138,7 +129,7 @@ def launch_analyzer(debug_mode=False, safe_mode=False):
     logger = logging.getLogger(__name__)
     
     try:
-        logger.info("🚀 Launching Advanced ML APK Security Analyzer...")
+        logger.info(" Launching Advanced ML APK Security Analyzer...")
         
         # Set environment variables
         env = os.environ.copy()
@@ -155,7 +146,7 @@ def launch_analyzer(debug_mode=False, safe_mode=False):
         
         from advanced_gui import main as gui_main
         
-        logger.info("✅ Application launched successfully")
+        logger.info(" Application launched successfully")
         gui_main()
         
     except ImportError as e:
@@ -193,7 +184,7 @@ def install_missing_dependencies(packages):
             sys.executable, '-m', 'pip', 'install'
         ] + packages)
         
-        logger.info("✅ Dependencies installed successfully")
+        logger.info("Dependencies installed successfully")
         return True
         
     except subprocess.CalledProcessError as e:
@@ -261,7 +252,7 @@ def main():
         logger.info("Debug mode enabled")
     
     logger.info("=" * 50)
-    logger.info("🤖 Advanced ML APK Security Analyzer Launcher")
+    logger.info("Fake Banking App Detector System")
     logger.info("=" * 50)
     
     # Run setup if requested
@@ -310,7 +301,7 @@ def main():
     check_directories()
     
     if args.check_only:
-        logger.info("✅ All checks passed - application ready to run")
+        logger.info(" All checks passed - application ready to run")
         return 0
     
 
@@ -327,9 +318,9 @@ if __name__ == "__main__":
         exit_code = main()
         sys.exit(exit_code)
     except KeyboardInterrupt:
-        print("\n⚠️ Application startup cancelled by user")
+        print("\n Application startup cancelled by user")
         sys.exit(1)
     except Exception as e:
-        print(f"❌ Critical error in launcher: {e}")
+        print(f"Critical error in launcher: {e}")
         print(traceback.format_exc())
         sys.exit(1)

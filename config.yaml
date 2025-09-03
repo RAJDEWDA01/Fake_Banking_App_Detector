@@ -124,7 +124,7 @@ legitimate_banks:
     - com.sbi.lotusintouch
 logging:
   backup_count: 5
-  file: D:\hackthon2\logs\apk_analyzer.log
+  file: D:\Fake_Banking_App_Detector\logs\apk_analyzer.log
   format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
   level: INFO
   loggers:
@@ -148,7 +148,7 @@ ml:
   models:
     auto_retrain: true
     retrain_threshold: 100
-    save_path: D:\hackthon2\models/
+    save_path: D:\Fake_Banking_App_Detector\models/
   training_data:
     synthetic_samples: 1000
     test_split: 0.2

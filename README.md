@@ -1,5 +1,5 @@
-                                                                                      # Fank Banking Detection App.
-                                                                                  # National Cybersheild Hacthon 2025
+# Fank Banking Detection App.
+# National Cybersheild Hacthon 2025
 
   <---------- Team Safe Ai ............>
   
@@ -11,5 +11,7 @@
   5). Anshu Sharma
 
 
+
   
+# pip install winshell pywin32
 

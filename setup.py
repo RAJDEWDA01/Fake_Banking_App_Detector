@@ -1,13 +1,4 @@
-#!/usr/bin/env python3
-"""
-Advanced ML APK Security Analyzer Setup Script
-===============================================
 
-This script sets up the complete environment for the APK analyzer,
-including dependencies, model training, and configuration.
-
-Usage: python setup.py [options]
-"""
 
 import os
 import sys
@@ -30,19 +21,19 @@ class APKAnalyzerSetup:
         
     def check_python_version(self):
         """Check if Python version is compatible"""
-        print("🐍 Checking Python version...")
+        print(" Checking Python version...")
         
         if sys.version_info < (3, 8):
-            print("❌ Error: Python 3.8 or higher is required")
+            print(" Error: Python 3.8 or higher is required")
             print(f"   Current version: {sys.version}")
             return False
             
-        print(f"✅ Python {sys.version_info.major}.{sys.version_info.minor} detected")
+        print(f" Python {sys.version_info.major}.{sys.version_info.minor} detected")
         return True
     
     def create_directories(self):
         """Create necessary directories"""
-        print("📁 Creating project directories...")
+        print(" Creating project directories...")
         
         directories = [
             self.models_dir,
@@ -57,11 +48,11 @@ class APKAnalyzerSetup:
             directory.mkdir(parents=True, exist_ok=True)
             print(f"   Created: {directory}")
         
-        print("✅ Directory structure created")
+        print(" Directory structure created")
     
     def install_dependencies(self, dev_mode=False):
         """Install Python dependencies"""
-        print("📦 Installing Python dependencies...")
+        print(" Installing Python dependencies...")
         
         try:
             # Upgrade pip first
@@ -88,23 +79,23 @@ class APKAnalyzerSetup:
                     sys.executable, "-m", "pip", "install"
                 ] + dev_packages)
                 
-                print("✅ Development dependencies installed")
+                print(" Development dependencies installed")
             
-            print("✅ Dependencies installed successfully")
+            print(" Dependencies installed successfully")
             return True
             
         except subprocess.CalledProcessError as e:
-            print(f"❌ Error installing dependencies: {e}")
+            print(f" Error installing dependencies: {e}")
             return False
     
     def setup_configuration(self):
         """Setup configuration files"""
-        print("⚙️ Setting up configuration...")
+        print(" Setting up configuration...")
         
         # Check if config.yaml exists
         config_file = self.project_root / "config.yaml"
         if not config_file.exists():
-            print("❌ config.yaml not found. Please ensure it's in the project directory.")
+            print(" config.yaml not found. Please ensure it's in the project directory.")
             return False
         
         # Load and validate configuration
@@ -120,29 +111,29 @@ class APKAnalyzerSetup:
             with open(config_file, 'w') as f:
                 yaml.dump(config, f, default_flow_style=False, indent=2)
             
-            print("✅ Configuration updated")
+            print(" Configuration updated")
             return True
             
         except Exception as e:
-            print(f"❌ Error setting up configuration: {e}")
+            print(f" Error setting up configuration: {e}")
             return False
     
     def download_sample_data(self):
         """Download sample APK files for testing (optional)"""
-        print("📥 Setting up sample data...")
+        print(" Setting up sample data...")
         
         # Create sample threat database if it doesn't exist
         threat_db_file = self.project_root / "threat_db.json"
         if not threat_db_file.exists():
-            print("❌ threat_db.json not found. Please ensure it's in the project directory.")
+            print(" threat_db.json not found. Please ensure it's in the project directory.")
             return False
         
-        print("✅ Sample data ready")
+        print(" Sample data ready")
         return True
     
     def train_initial_models(self):
         """Train initial ML models"""
-        print("🤖 Training initial ML models...")
+        print(" Training initial ML models...")
         
         try:
             # Import the ML analyzer
@@ -151,17 +142,17 @@ class APKAnalyzerSetup:
             
             # Initialize and train
             analyzer = MLSecurityAnalyzer()
-            print("✅ ML models trained and saved")
+            print(" ML models trained and saved")
             return True
             
         except Exception as e:
-            print(f"❌ Error training models: {e}")
+            print(f" Error training models: {e}")
             print("   This is normal on first setup. Models will be trained on first use.")
             return True  # Don't fail setup for this
     
     def create_desktop_shortcut(self):
         """Create desktop shortcut (Windows/Linux)"""
-        print("🖥️ Creating desktop shortcut...")
+        print(" Creating desktop shortcut...")
         
         try:
             if sys.platform == "win32":
@@ -180,7 +171,7 @@ class APKAnalyzerSetup:
                 shortcut.IconLocation = sys.executable
                 shortcut.save()
                 
-                print("✅ Windows shortcut created")
+                print("Windows shortcut created")
                 
             elif sys.platform.startswith("linux"):
                 # Linux desktop entry
@@ -200,15 +191,15 @@ Categories=Development;Security;
                 
                 # Make executable
                 os.chmod(desktop_file, 0o755)
-                print("✅ Linux desktop entry created")
+                print(" Linux desktop entry created")
                 
         except Exception as e:
-            print(f"⚠️ Could not create desktop shortcut: {e}")
+            print(f"Could not create desktop shortcut: {e}")
             print("   You can run the application with: python advanced_gui.py")
     
     def run_tests(self):
         """Run basic tests to verify setup"""
-        print("🧪 Running setup verification tests...")
+        print(" Running setup verification tests...")
         
         try:
             # Test imports
@@ -218,33 +209,34 @@ Categories=Development;Security;
             import numpy as np
             import matplotlib.pyplot as plt
             import seaborn as sns
-            from androguard.core.bytecodes.apk import APK
+            from androguard.core.apk import APK
+
             
-            print("✅ All imports successful")
+            print("All imports successful")
             
             # Test GUI creation (without showing)
             root = tk.Tk()
             root.withdraw()  # Hide window
             root.destroy()
             
-            print("✅ GUI framework working")
+            print(" GUI framework working")
             
             # Test model loading/creation
             sys.path.append(str(self.project_root))
             from ml_analyzer import MLSecurityAnalyzer
             
             analyzer = MLSecurityAnalyzer()
-            print("✅ ML analyzer initialized")
+            print(" ML analyzer initialized")
             
             return True
             
         except Exception as e:
-            print(f"❌ Test failed: {e}")
+            print(f" Test failed: {e}")
             return False
     
     def setup_environment(self, dev_mode=False, skip_models=False):
         """Complete setup process"""
-        print("🚀 Starting Advanced ML APK Analyzer setup...")
+        print(" Starting Advanced ML APK Analyzer setup...")
         print("=" * 50)
         
         # Step-by-step setup
@@ -273,23 +265,23 @@ Categories=Development;Security;
         
         # Summary
         print("\n" + "=" * 50)
-        print("🏁 Setup Summary")
+        print("Setup Summary")
         print("=" * 50)
         
         if not failed_steps:
-            print("✅ Setup completed successfully!")
-            print("\n🎉 You can now run the APK analyzer:")
+            print(" Setup completed successfully!")
+            print("\n You can now run the APK analyzer:")
             print(f"   python {self.project_root}/advanced_gui.py")
             
         else:
-            print("⚠️ Setup completed with warnings:")
+            print(" Setup completed with warnings:")
             for step in failed_steps:
                 print(f"   - {step}")
-            print("\n💡 The application may still work despite these warnings.")
+            print("\n The application may still work despite these warnings.")
         
-        print(f"\n📁 Project directory: {self.project_root}")
-        print(f"📊 Models directory: {self.models_dir}")
-        print(f"📋 Logs directory: {self.logs_dir}")
+        print(f"\nProject directory: {self.project_root}")
+        print(f"Models directory: {self.models_dir}")
+        print(f" Logs directory: {self.logs_dir}")
         
         return len(failed_steps) == 0
 
@@ -329,7 +321,7 @@ Examples:
     setup = APKAnalyzerSetup()
     
     if args.test_only:
-        print("🧪 Running verification tests only...")
+        print(" Running verification tests only...")
         success = setup.run_tests()
         sys.exit(0 if success else 1)
     
